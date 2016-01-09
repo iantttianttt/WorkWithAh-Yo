@@ -360,7 +360,6 @@ public class GameManager : MonoBehaviour {
 		}
 		PlayingAnimControl();
 
-		Debug.Log(curID);
 		if(curID != 5){
 			curID +=1;
 		}else if(curID == 5){
