@@ -57,24 +57,39 @@ public class GameManager : MonoBehaviour {
 	public MedicineInfo[] medicine = new MedicineInfo[5];
 	public Animator anim;
 	public Animator animTimer;
-	public float TimePerRound = 45f;
-	public float timeData = 0f;
-	public float playingSpeed = 1;
-	public int score = 0;
+	public Animator animBonus;
+
 	public GameObject[] medicineObj = new GameObject[5];
 	public List<int> numberForID;
 	public Text scoreTxt;
 	public Text timeTxt;
+	public GameObject bonusLevelObj;
+	public Sprite[] bonusLevelSprite = new Sprite[9];
+	public MedicineInfo curMedicine;
+	public AudioSource bgm;
+	public AudioSource crrectSound;
+	public AudioSource wrongSound;
+	public AudioSource timeUpSound;
+	public float timePerRound = 45f;
+	public float curTime = 0f;
+	public float playingSpeed = 1;
+	public int score = 0;
+	public int crrectPoint;
+	public int wrongPoint;
+	public int missPoint;
+	public int bonusPoint;
 
 
-	public Result choiceResult;
+
+	private Result choiceResult;
 	private RecoverChoice recoverChoice;
-	public int curID = 1;
+	private int curID = 1;
 	private bool isTimer = false;
 	private bool isPlayingGame = false;
+	private SpriteRenderer curSprite;
+	private bool canChooose = true;
 
 
-	public MedicineInfo curMedicine;
 
 
 
@@ -84,15 +99,17 @@ public class GameManager : MonoBehaviour {
 
 	void Start () {
 		anim = this.gameObject.GetComponent<Animator>();
+		curSprite = bonusLevelObj.GetComponent<SpriteRenderer>();
+		animBonus = GameObject.Find("BonusLevel").GetComponent<Animator>();
 		gamingState = GamingState.GameLoding;
 		playingState = PlayingState.Null;
 		GamingAnimControl();
 	}
-
-
+		
 	void Update () {
 		anim.speed = playingSpeed;
 		animTimer.speed = playingSpeed;
+		animBonus.speed = playingSpeed;
 		anim.SetInteger("curMedicine",curMedicine.number);
 		if(isTimer == true){
 			StartCalculateTime();
@@ -102,38 +119,113 @@ public class GameManager : MonoBehaviour {
 			isPlayingGame = false;
 		}
 
-		if(playingState == PlayingState.ChoiceTime){
+		if(playingState == PlayingState.ChoiceTime && canChooose == true){
 			if(Input.GetKey(KeyCode.LeftArrow)){
 				playingState = PlayingState.ChoiceMoving;
+				recoverChoice = RecoverChoice.Left;
 				anim.SetTrigger("chooseLeft");
 				animTimer.SetTrigger("OnLeft");
-				SelectionJudge(true);
+				SelectionJudge();
 			}else if(Input.GetKey(KeyCode.RightArrow)){
 				playingState = PlayingState.ChoiceMoving;
+				recoverChoice = RecoverChoice.Right;
 				anim.SetTrigger("chooseRight");
 				animTimer.SetTrigger("OnRight");
-				SelectionJudge(false);
+				SelectionJudge();
 			}
+		}
+		if(score <= 0) {
+			score = 0;
 		}
 
 		scoreTxt.text = score.ToString();
-		timeTxt.text = (45-(int)timeData).ToString();
+		timeTxt.text = (timePerRound-(int)curTime).ToString();
+		if(gamingState == GamingState.GameLoding){
+			if(Input.GetKey(KeyCode.Space)){
+				GameStart();
+				bgm.Play();
+			}
+		}else if(gamingState == GamingState.ResultScene){
+			if(Input.GetKey(KeyCode.RightArrow)){
+				ResultScene();
+			}
+		}
+
+
+		if(curSprite.sprite == bonusLevelSprite[0]){
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				curSprite.sprite = bonusLevelSprite[1];
+				Cannnotchoose();
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[1]){
+			if(Input.GetKey(KeyCode.RightArrow)){
+				curSprite.sprite = bonusLevelSprite[2];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[2]){
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				curSprite.sprite = bonusLevelSprite[3];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[3]){
+			if(Input.GetKey(KeyCode.RightArrow)){
+				curSprite.sprite = bonusLevelSprite[4];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[4]){
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				curSprite.sprite = bonusLevelSprite[5];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[5]){
+			if(Input.GetKey(KeyCode.RightArrow)){
+				curSprite.sprite = bonusLevelSprite[6];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[6]){
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				curSprite.sprite = bonusLevelSprite[7];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[7]){
+			if(Input.GetKey(KeyCode.RightArrow)){
+				curSprite.sprite = bonusLevelSprite[8];
+			}
+		}else if(curSprite.sprite == bonusLevelSprite[8]){
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				curSprite.sprite = null;
+				anim.SetTrigger("bonusOff");
+				score += bonusPoint;
+				playingState = PlayingState.ChoiceTime;
+			}
+		}
+
+		if(playingState == PlayingState.BonusLevel){
+			animBonus.SetBool("isInBonusLevel",true);
+		}else{
+			animBonus.SetBool("isInBonusLevel",false);
+		}
+
+
+		if(score <= 200){
+			playingSpeed = 1;
+		}else if(score > 200 && score <= 500){
+			playingSpeed = 2;
+		}else if(score > 500 && score <= 750){
+			playingSpeed = 3;
+		}else if(score > 750 && score < 1000){
+			playingSpeed = 4;
+		}else if(score >= 1000){
+			playingSpeed = 5;
+		}
 
 	}
 
 
 
-
-
-
-
-
-
-
-
 	#region Gaming Function
 	public void InitializationScene () {
-		
+		score = 0;
+		curTime = 0;
+		canChooose = true;
+		bgm.Stop();
+		crrectSound.Stop();
+		wrongSound.Stop();
+		timeUpSound.Stop();
 	}
 
 	public void GameStart () {
@@ -142,8 +234,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void StartCalculateTime () {
-		timeData += Time.deltaTime;
-		if(timeData >= TimePerRound){
+		curTime += Time.deltaTime;
+		if(curTime >= timePerRound){
 			TimeUp();
 		}
 	}
@@ -151,10 +243,12 @@ public class GameManager : MonoBehaviour {
 	private void TimeUp () {
 		gamingState = GamingState.CalculateResult;
 		isTimer = false;
+		timeUpSound.Play();
 		GamingAnimControl();
 	}
 
-	public void CalculateResult () {
+	public IEnumerator CalculateResult () {
+		yield return new WaitForSeconds(3);
 		gamingState = GamingState.ResultScene;
 		GamingAnimControl();
 	}
@@ -172,35 +266,23 @@ public class GameManager : MonoBehaviour {
 			break;
 		case GamingState.Playing:
 			isTimer = true;
-			timeData = 0;
+			curTime = 0;
 			isPlayingGame = true;
 			break;
 		case GamingState.CalculateResult:
-			CalculateResult();
+			StartCoroutine(CalculateResult());
 			break;
 		case GamingState.ResultScene:
-			ResultScene();
 			break;
 		}
 	}
 	#endregion
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 	#region Playing Fumction
 	public void ReachLocation () {
 		if(curMedicine.name == "medicine5"){
+			Debug.Log("in");
 			playingState = PlayingState.BonusLevel;
 		}else{
 			playingState = PlayingState.ChoiceTime;
@@ -215,16 +297,15 @@ public class GameManager : MonoBehaviour {
 		playingState = PlayingState.Result;
 	}
 
-
-	private void SelectionJudge(bool _isChooseLeft) {
-		if(_isChooseLeft == false){
-			if(curMedicine.number == 1 || curMedicine.number == 2 ||curMedicine.number == 4 ||curMedicine.number == 5){
+	private void SelectionJudge() {
+		if(recoverChoice == RecoverChoice.Right){
+			if(curMedicine.number == 1 || curMedicine.number == 2 || curMedicine.number == 4 || curMedicine.number == 5){
 				choiceResult = Result.Correct;
 			}else if(curMedicine.number == 3){
 				choiceResult = Result.Wrong;
 			}
-		}else if(_isChooseLeft == true){
-			if(curMedicine.number == 1 || curMedicine.number == 2 ||curMedicine.number == 4 ||curMedicine.number == 5){
+		}else if(recoverChoice == RecoverChoice.Left){
+			if(curMedicine.number == 1 || curMedicine.number == 2 || curMedicine.number == 4 || curMedicine.number == 5){
 				choiceResult = Result.Wrong;
 			}else if(curMedicine.number == 3){
 				choiceResult = Result.Correct;
@@ -238,6 +319,14 @@ public class GameManager : MonoBehaviour {
 		medicineObj[2].SetActive(false);
 		medicineObj[3].SetActive(false);
 		medicineObj[4].SetActive(false);
+	}
+
+	public void Canchoose (){
+		canChooose = true;
+	}
+
+	public void Cannnotchoose (){
+		canChooose = false;
 	}
 
 	private IEnumerator MedicineObjProcess () {
@@ -261,7 +350,6 @@ public class GameManager : MonoBehaviour {
 				yield return null;
 			}
 		}
-		choiceResult = Result.Null;
 		PlayingAnimControl();
 		while(playingState == PlayingState.ChoiceTime){
 			yield return null;
@@ -331,6 +419,9 @@ public class GameManager : MonoBehaviour {
 			break;
 
 		case PlayingState.BonusLevel:
+			anim.SetTrigger("bonusOn");
+			bonusLevelObj.SetActive(true);
+			curSprite.sprite = bonusLevelSprite[0];
 			break;
 
 		case PlayingState.ChoiceTime:
@@ -349,15 +440,19 @@ public class GameManager : MonoBehaviour {
 			if(gamingState == GamingState.Playing){
 				switch(choiceResult){
 				case Result.Miss:
-					score -= 10 ; 
+					wrongSound.Play();
+					score -= missPoint; 
 					break;
 				case Result.Wrong:
-					score -= 15;
+					wrongSound.Play();
+					score -= wrongPoint;
 					break;
 				case Result.Correct:
-					score += 10;
+					crrectSound.Play();
+					score += crrectPoint;
 					break;
 				}
+				choiceResult = Result.Null;
 			}
 			break;
 		}
@@ -378,8 +473,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	#endregion
-
-
 
 
 }
