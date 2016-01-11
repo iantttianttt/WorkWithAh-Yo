@@ -219,13 +219,17 @@ public class GameManager : MonoBehaviour {
 
 	#region Gaming Function
 	public void InitializationScene () {
+		anim.SetTrigger("setDefault");
 		score = 0;
 		curTime = 0;
 		canChooose = true;
+		curSprite.sprite = null;
 		bgm.Stop();
 		crrectSound.Stop();
 		wrongSound.Stop();
 		timeUpSound.Stop();
+		ResetAppearedID();
+		curID = 1;
 	}
 
 	public void GameStart () {
