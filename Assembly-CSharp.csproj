@@ -45,8 +45,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Script\GameManager.cs" />
-     <Compile Include="Assets\Script\SceneRander.cs" />
+     <Compile Include="Assets\Script\GameStage\GameManager.cs" />
+     <Compile Include="Assets\Script\GameStage\SceneVideoRander.cs" />
+     <Compile Include="Assets\Script\LevelLoadingSystem\GameSceneManager.cs" />
+     <Compile Include="Assets\Script\LevelLoadingSystem\LoadingScene.cs" />
+     <Compile Include="Assets\Script\LevelLoadingSystem\SceneInitializer.cs" />
+     <Compile Include="Assets\Script\LevelLoadingSystem\SceneLoader.cs" />
+     <Compile Include="Assets\Script\LevelLoadingSystem\SceneNameList.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

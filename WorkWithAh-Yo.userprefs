@@ -1,9 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\GameManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\LevelLoadingSystem\SceneLoader.cs">
     <Files>
-      <File FileName="Assets\Script\GameManager.cs" Line="222" Column="33" />
-      <File FileName="Assets\Script\SceneRander.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\LevelLoadingSystem\SceneLoader.cs" Line="26" Column="25" />
+      <File FileName="Assets\Script\LevelLoadingSystem\GameSceneManager.cs" Line="59" Column="3" />
+      <File FileName="Assets\Script\LevelLoadingSystem\LoadingScene.cs" Line="11" Column="47" />
+      <File FileName="Assets\Script\LevelLoadingSystem\SceneNameList.cs" Line="11" Column="31" />
+      <File FileName="Assets\Script\LevelLoadingSystem\SceneInitializer.cs" Line="16" Column="1" />
+      <File FileName="Assets\Editor\CreateHolder.cs" Line="5" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

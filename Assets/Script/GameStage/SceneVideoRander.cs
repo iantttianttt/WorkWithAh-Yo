@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class SceneRander : MonoBehaviour {
+public class SceneVideoRander : MonoBehaviour {
 
 
 	public GameManager gm; 
